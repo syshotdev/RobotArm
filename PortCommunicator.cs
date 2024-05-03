@@ -2,17 +2,11 @@ using System;
 using System.IO.Ports;
 using Godot;
 
-//[Signal]
-//public delegate void SendMessageEventHandler(string message);
-
 public partial class PortCommunicator : Node3D
 {
 	const int BaudRate = 2400;
 	const int DataBits = 8; // I don't remember the amount.  EDIT: I still don't know it
-
-	/* This code in comment is depreciated. (Because I don't know what type these are)
-	  const int ParityBits = 0;
-	  const int StopBits = 2;*/
+	const string portName = "/dev/ttyUSB0";
 
 	private SerialPort port;
 
@@ -31,7 +25,8 @@ public partial class PortCommunicator : Node3D
 
 		port.DataReceived += new SerialDataReceivedEventHandler(ReceivedMessage);
 
-		TestFunction();
+		// This is "temporary" but I won't fix it.
+		ChangePort(portName);
 	}
 
 	private void TestFunction()
@@ -50,11 +45,13 @@ public partial class PortCommunicator : Node3D
 
 	public void SendMessage(string message)
 	{
+		GD.Print("Just to make sure, this is what you're printing: " + message);
 		char[] byteMessage = message.ToCharArray(); // Probably can just be optimized to port.WriteString
 		port.Write(byteMessage, 0, byteMessage.Length);
 	}
 
-	private static void ReceivedMessage(object sender, SerialDataReceivedEventArgs e)
+	// Technically this can be static but I want to use THIS class's port.
+	private void ReceivedMessage(object sender, SerialDataReceivedEventArgs e)
 	{
 		SerialPort tempPort = (SerialPort)sender;
 		string indata = tempPort.ReadExisting();

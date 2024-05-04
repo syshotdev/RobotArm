@@ -1,14 +1,12 @@
 [gd_scene load_steps=3 format=3 uid="uid://b7hlwbr748ywq"]
 
 [ext_resource type="Script" path="res://PortCommunicator.cs" id="1_o2fqk"]
-[ext_resource type="Script" path="res://TestForTerminal.gd" id="2_wk12u"]
+[ext_resource type="Script" path="res://ServoCommunicator.gd" id="2_7706h"]
 
 [node name="Node3D" type="Node3D"]
 
 [node name="PortCommunicator" type="Node3D" parent="."]
 script = ExtResource("1_o2fqk")
 
-[node name="ServoCommunicator" type="Node3D" parent="."]
-script = ExtResource("2_wk12u")
-
-[connection signal="sendMessage" from="ServoCommunicator" to="PortCommunicator" method="SendMessage"]
+[node name="ServoCommunicator" type="Node" parent="."]
+script = ExtResource("2_7706h")

@@ -10,3 +10,5 @@ script = ExtResource("1_o2fqk")
 
 [node name="ServoCommunicator" type="Node" parent="."]
 script = ExtResource("2_7706h")
+
+[connection signal="SendCommand" from="ServoCommunicator" to="PortCommunicator" method="SendCommand"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://b7hlwbr748ywq"]
 
-[ext_resource type="Script" path="res://ServoCommunicator.cs" id="1_o2fqk"]
-[ext_resource type="Script" path="res://ServoCommunicator.gd" id="2_7706h"]
+[ext_resource type="Script" path="res://Scripts/ServoCommunicator.cs" id="1_o2fqk"]
+[ext_resource type="Script" path="res://Scripts/ServoCommunicator.gd" id="2_7706h"]
 
 [node name="Node3D" type="Node3D"]
 

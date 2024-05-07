@@ -1,14 +1,45 @@
-[gd_scene load_steps=3 format=3 uid="uid://b7hlwbr748ywq"]
+[gd_scene load_steps=8 format=3 uid="uid://b7hlwbr748ywq"]
 
 [ext_resource type="Script" path="res://Scripts/ServoCommunicator.cs" id="1_o2fqk"]
 [ext_resource type="Script" path="res://Scripts/ServoCommunicator.gd" id="2_7706h"]
+[ext_resource type="Script" path="res://Scripts/CameraRoot.gd" id="3_rfxrw"]
+[ext_resource type="PackedScene" uid="uid://dlbkbf1hoiqp5" path="res://robot_arm_segment.tscn" id="4_n0p2h"]
 
-[node name="Node3D" type="Node3D"]
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_grr2f"]
+sky_top_color = Color(0.249629, 0.5877, 0.848529, 1)
+sky_horizon_color = Color(0.25098, 0.588235, 0.847059, 1)
+ground_horizon_color = Color(0.373834, 0.509343, 0.619297, 1)
 
-[node name="PortCommunicator" type="Node3D" parent="."]
+[sub_resource type="Sky" id="Sky_cw4my"]
+sky_material = SubResource("ProceduralSkyMaterial_grr2f")
+
+[sub_resource type="Environment" id="Environment_2g43g"]
+background_mode = 2
+sky = SubResource("Sky_cw4my")
+ambient_light_color = Color(0.25098, 0.588235, 0.847059, 1)
+
+[node name="Main" type="Node3D"]
+
+[node name="PortCommunicator" type="Node" parent="."]
 script = ExtResource("1_o2fqk")
 
 [node name="ServoCommunicator" type="Node" parent="."]
 script = ExtResource("2_7706h")
 
-[connection signal="SendCommand" from="ServoCommunicator" to="PortCommunicator" method="SendCommand"]
+[node name="CameraRoot" type="Node3D" parent="."]
+script = ExtResource("3_rfxrw")
+
+[node name="Yaw" type="Node3D" parent="CameraRoot"]
+
+[node name="Pitch" type="Node3D" parent="CameraRoot/Yaw"]
+
+[node name="Camera3D" type="Camera3D" parent="CameraRoot/Yaw/Pitch"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+
+[node name="RobotArmSegment" parent="." instance=ExtResource("4_n0p2h")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_2g43g")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.930501, 0.134043, 0.340882, -0.36629, 0.340516, 0.865956, 0, -0.930635, 0.365949, 0, 3.71206, 0)

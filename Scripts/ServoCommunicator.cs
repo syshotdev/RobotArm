@@ -2,7 +2,7 @@ using System;
 using System.IO.Ports;
 using Godot;
 
-public partial class ServoCommunicator : Node3D
+public partial class ServoCommunicator : Node
 {
     const int BaudRate = 2400;
     const int DataBits = 8; // I don't remember the amount.  EDIT: I still don't know it

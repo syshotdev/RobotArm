@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://dlbkbf1hoiqp5"]
+
+[ext_resource type="Script" path="res://Scripts/RobotArmSegment.gd" id="1_0rpwc"]
+
+[node name="RobotArmSegment" type="Node3D"]
+script = ExtResource("1_0rpwc")
+
+[node name="Segment" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+size = Vector3(2, 0.4, 0.4)

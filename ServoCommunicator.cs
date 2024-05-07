@@ -2,7 +2,7 @@ using System;
 using System.IO.Ports;
 using Godot;
 
-public partial class PortCommunicator : Node3D
+public partial class ServoCommunicator : Node3D
 {
     const int BaudRate = 2400;
     const int DataBits = 8; // I don't remember the amount.  EDIT: I still don't know it
@@ -33,7 +33,7 @@ public partial class PortCommunicator : Node3D
     {
         GD.Print(SerialPort.GetPortNames());
         ChangePort("/dev/ttyUSB0");
-        SendCommand("!SCVER" + 13);
+        SendMessage("!SCVER?" + Convert.ToChar(13));
     }
 
     public void ChangePort(string portName)
@@ -43,11 +43,26 @@ public partial class PortCommunicator : Node3D
         port.Open();
     }
 
-    public void SendCommand(string command)
+    public void SendCommand(int servoIndex, int position, int ramp)
     {
-        GD.Print("Just to make sure, this is what you're sending: " + command);
-        char[] byteMessage = command.ToCharArray(); // Probably can just be optimized to port.WriteString
-        port.Write(byteMessage, 0, byteMessage.Length);
+        byte positionLowBit = Convert.ToByte(position % 255);
+        byte positionHighBit = Convert.ToByte(position >> 8);
+        byte[] byteMessage = new byte[4];
+        // I really wish I could put this in brackets :( []
+        // First ServoIndex 1 byte, Ramp 1 byte, Position is 2 bytes
+        byteMessage[0] = Convert.ToByte(servoIndex);
+        byteMessage[1] = Convert.ToByte(ramp);
+        byteMessage[2] = positionLowBit;
+        byteMessage[3] = positionHighBit;
+
+        // Example message: !SC(0)(63)(1)(255)(13) to make servo 0 to pos 511
+        string message = "!SC" + byteMessage.GetStringFromUtf8() + Convert.ToChar(13);
+        port.WriteLine(message);
+    }
+
+    public void SendMessage(string message)
+    {
+        port.WriteLine(message);
     }
 
     // Technically this can be static but I want to use THIS class's port.

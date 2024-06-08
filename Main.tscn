@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://b7hlwbr748ywq"]
+[gd_scene load_steps=9 format=3 uid="uid://b7hlwbr748ywq"]
 
 [ext_resource type="Script" path="res://Scripts/ServoCommunicator.cs" id="1_o2fqk"]
 [ext_resource type="Script" path="res://Scripts/ServoCommunicator.gd" id="2_7706h"]
 [ext_resource type="Script" path="res://Scripts/CameraRoot.gd" id="3_rfxrw"]
 [ext_resource type="PackedScene" uid="uid://dlbkbf1hoiqp5" path="res://robot_arm_segment.tscn" id="4_n0p2h"]
+[ext_resource type="Script" path="res://Scripts/RobotArmSelector.gd" id="4_o18il"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_grr2f"]
 sky_top_color = Color(0.249629, 0.5877, 0.848529, 1)
@@ -36,10 +37,29 @@ script = ExtResource("3_rfxrw")
 [node name="Camera3D" type="Camera3D" parent="CameraRoot/Yaw/Pitch"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 
-[node name="RobotArmSegment" parent="." instance=ExtResource("4_n0p2h")]
+[node name="RobotArmSelector" type="Node3D" parent="."]
+script = ExtResource("4_o18il")
+
+[node name="RobotArmRoot" type="Node3D" parent="."]
+transform = Transform3D(-1, 7.64274e-15, 8.74228e-08, 0, -1, 8.74228e-08, 8.74228e-08, 8.74228e-08, 1, 0, 0, 0)
+
+[node name="Shoulder" parent="RobotArmRoot" node_paths=PackedStringArray("nextArmSegment") instance=ExtResource("4_n0p2h")]
+servo = 1
+nextArmSegment = NodePath("Elbow")
+
+[node name="Elbow" parent="RobotArmRoot/Shoulder" node_paths=PackedStringArray("nextArmSegment") instance=ExtResource("4_n0p2h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.10065, 0, 0)
+servo = 3
+lengthCM = 50
+nextArmSegment = NodePath("Wrist")
+
+[node name="Wrist" parent="RobotArmRoot/Shoulder/Elbow" instance=ExtResource("4_n0p2h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9967, 0, 0)
+servo = 4
+lengthCM = 10
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_2g43g")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.930501, 0.134043, 0.340882, -0.36629, 0.340516, 0.865956, 0, -0.930635, 0.365949, 0, 3.71206, 0)
+transform = Transform3D(0.930501, 0.134043, 0.340882, -0.36629, 0.340516, 0.865957, 0, -0.930635, 0.365949, -3.95073, 3.71206, 0)

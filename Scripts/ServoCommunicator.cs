@@ -5,7 +5,7 @@ using Godot;
 public partial class ServoCommunicator : Node
 {
 	const int BaudRate = 2400;
-	const int DataBits = 8; // I don't remember the amount.  EDIT: I still don't know it
+	const int DataBits = 8; // I don't remember the amount.  EDIT: I still don't know it but it works
 	const string portName = "/dev/ttyUSB0";
 
 	private SerialPort port;
@@ -64,6 +64,13 @@ public partial class ServoCommunicator : Node
 	{
 		port.WriteLine(message);
 	}
+
+  // To get the ports when using GDScript
+  public string[] GetPortNames()
+  {
+		GD.Print(SerialPort.GetPortNames());
+		return SerialPort.GetPortNames();
+  }
 
 	// Technically this can be static but I want to use THIS class's port.
 	private void ReceivedMessage(object sender, SerialDataReceivedEventArgs e)

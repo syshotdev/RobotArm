@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://b7hlwbr748ywq"]
+[gd_scene load_steps=10 format=3 uid="uid://b7hlwbr748ywq"]
 
 [ext_resource type="Script" path="res://Scripts/ServoCommunicator.cs" id="1_o2fqk"]
 [ext_resource type="Script" path="res://Scripts/ServoCommunicator.gd" id="2_7706h"]
 [ext_resource type="Script" path="res://Scripts/CameraRoot.gd" id="3_rfxrw"]
 [ext_resource type="PackedScene" uid="uid://dlbkbf1hoiqp5" path="res://robot_arm_segment.tscn" id="4_n0p2h"]
 [ext_resource type="Script" path="res://Scripts/RobotArmSelector.gd" id="4_o18il"]
+[ext_resource type="Script" path="res://Scripts/CommandLine.gd" id="6_5m7gu"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_grr2f"]
 sky_top_color = Color(0.249629, 0.5877, 0.848529, 1)
@@ -58,8 +59,43 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9967, 0, 0)
 servo = 4
 lengthCM = 10
 
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CommandLine" type="Control" parent="UI" node_paths=PackedStringArray("lineEdit", "servoCommunicator")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_5m7gu")
+lineEdit = NodePath("LineEdit")
+servoCommunicator = NodePath("../../ServoCommunicator")
+
+[node name="LineEdit" type="LineEdit" parent="UI/CommandLine"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+placeholder_text = "what the dog doin"
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_2g43g")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.930501, 0.134043, 0.340882, -0.36629, 0.340516, 0.865957, 0, -0.930635, 0.365949, -3.95073, 3.71206, 0)
+
+[connection signal="GetPortNames" from="ServoCommunicator" to="PortCommunicator" method="GetPortNames"]
+[connection signal="SendCommand" from="ServoCommunicator" to="PortCommunicator" method="SendCommand"]
+[connection signal="SendMessage" from="ServoCommunicator" to="PortCommunicator" method="SendMessage"]

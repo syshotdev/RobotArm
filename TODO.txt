@@ -1,0 +1,17 @@
+Neovim-type entering of letters or commands (like :move 0 99)
+Name everything better (I have two ServoCommunicator's but they do different things)
+README.md
+Publish to GitHub
+Tab of ports that are currently seen
+Automatically detect robot arm (Disconnect port and connect again)
+Press on robot arms visually and manually adjust the angle (GUI)
+Make the robot dance
+Inverse kinematics for precise robot control
+Object collision detection (By creating the scene in godot and not letting it move further than that)
+
+This would be funny but I will never do it:
+Allow for controlling it via internet (so someone from across the world can controll it)
+
+
+Done:
+

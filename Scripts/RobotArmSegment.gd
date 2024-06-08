@@ -35,12 +35,13 @@ func Move(newServoPosition : int):
 
   var rotationDegreesFromPositionAndDegrees = MapRange(servoPosition, minPosition, maxPosition, minDegrees, maxDegrees)
 
+  # TODO: For robot base, make this the bottom's rotation.
   rotation.z = deg_to_rad(rotationDegreesFromPositionAndDegrees)
 
 
 # A range from f1(first1) to f2 is now mapped to s1(second1) to s2,
 # Example: (50, 0, 100, 100, 1000). Mapping (0 to 100) to (100 to 1000), and return what 50 would be. 
-# This will return half of 1000 minus 100, being 450.
+# This will return half of (1000 minus 100), being 450.
 func MapRange(input, f1, f2, s1, s2) -> float:
   # https://stackoverflow.com/questions/5731863/mapping-a-numeric-range-onto-another
   var slope : float = (s1 - s2) / (f1 - f2)

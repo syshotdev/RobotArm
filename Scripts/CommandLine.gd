@@ -3,30 +3,50 @@ extends Control
 @export var lineEdit : LineEdit
 @export var servoCommunicator : ServoCommunicator
 
+var history := [""]
+var currentHistoryIndex := 0
+
 # Start the commandline if commandline button pressed
-func _input(_event):
+func _input(event):
+  
+  if not (event is InputEventKey):
+    return
+
+  # Commandline history
+  if Input.is_action_pressed("ui_up"):
+    currentHistoryIndex += 1
+    currentHistoryIndex = mini(currentHistoryIndex, history.size() - 1)
+    lineEdit.text = history[currentHistoryIndex]
+
+  if Input.is_action_pressed("ui_down"):
+    currentHistoryIndex -= 1
+    currentHistoryIndex = maxi(currentHistoryIndex, 0)
+    lineEdit.text = history[currentHistoryIndex]
+
 
   # If commandline pressed, make it visible
   if Input.is_action_just_pressed("COMMAND_LINE"):
-   lineEdit.visible = !lineEdit.visible
+    lineEdit.visible = !lineEdit.visible
 
-  # Mouse mode depending on if commandline is visible
-  if lineEdit.visible:
-    Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-  else:
-    Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+
+    # Mouse mode depending on if commandline is visible
+    if lineEdit.visible:
+      Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+    else:
+      Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
 
 # When you press enter, this gets called and it sanitizes the input
 func commandlineTextEntered(text : String):
 
   text = text.lstrip(" ").rstrip(" ")
+
+  # Append command history
+  history.insert(1, text) 
+  currentHistoryIndex = 0
+
   var tokens := text.split(" ")
   
-  if tokens.size() <= 0:
-    printerr("Command that you entered doesn't have anything")
-    return
-
   # Clear the line edit so it looks like you entered the command
   lineEdit.text = "" 
 
@@ -49,15 +69,22 @@ func runCommand(command : String, tokens : PackedStringArray):
       moveArm(tokens[0], tokens[1].to_int(), tokens[2].to_int())
 
     _:
-      printerr("No command named {}", command)
+      printerr("No command named '%s'" % command)
 
 
 func sendLineEditError(text : String):
   printerr(text)
-  pass # TODO: Implement this
+  pass # TODO: Implement this by showing on-screen error
 
 
 # TODO: Make "servoPosition" degrees rather than an arbitrary number
+# TODO: If you input a command incorrectly (Give number instead of string for ServoIndex.get)
+# you shouldn't crash but be given an error
 func moveArm(servo : String, servoPosition : int, ramp : int):
-  var index : Constants.ServoIndex = Constants.ServoIndex.get(servo)
+  # This should really be an "Option" type from Rust. So sad Godot doesn't support that
+  if Constants.ServoIndex.get(servo.to_upper()) == null:
+    sendLineEditError("First argument should be a string of a known servo. Ex: base")
+    return
+
+  var index : Constants.ServoIndex = Constants.ServoIndex.get(servo.to_upper())
   servoCommunicator.MoveServo(index, servoPosition, ramp)

@@ -28,16 +28,6 @@ script = ExtResource("1_o2fqk")
 [node name="ServoCommunicator" type="Node" parent="."]
 script = ExtResource("2_7706h")
 
-[node name="CameraRoot" type="Node3D" parent="."]
-script = ExtResource("3_rfxrw")
-
-[node name="Yaw" type="Node3D" parent="CameraRoot"]
-
-[node name="Pitch" type="Node3D" parent="CameraRoot/Yaw"]
-
-[node name="Camera3D" type="Camera3D" parent="CameraRoot/Yaw/Pitch"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
-
 [node name="RobotArmSelector" type="Node3D" parent="."]
 script = ExtResource("4_o18il")
 
@@ -58,6 +48,16 @@ nextArmSegment = NodePath("Wrist")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9967, 0, 0)
 servo = 4
 lengthCM = 10
+
+[node name="CameraRoot" type="Node3D" parent="."]
+script = ExtResource("3_rfxrw")
+
+[node name="Yaw" type="Node3D" parent="CameraRoot"]
+
+[node name="Pitch" type="Node3D" parent="CameraRoot/Yaw"]
+
+[node name="Camera3D" type="Camera3D" parent="CameraRoot/Yaw/Pitch"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 3
@@ -84,7 +84,8 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -31.0
+offset_top = -40.0
+offset_bottom = -1.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 22
@@ -99,3 +100,4 @@ transform = Transform3D(0.930501, 0.134043, 0.340882, -0.36629, 0.340516, 0.8659
 [connection signal="GetPortNames" from="ServoCommunicator" to="PortCommunicator" method="GetPortNames"]
 [connection signal="SendCommand" from="ServoCommunicator" to="PortCommunicator" method="SendCommand"]
 [connection signal="SendMessage" from="ServoCommunicator" to="PortCommunicator" method="SendMessage"]
+[connection signal="text_submitted" from="UI/CommandLine/LineEdit" to="UI/CommandLine" method="commandlineTextEntered"]

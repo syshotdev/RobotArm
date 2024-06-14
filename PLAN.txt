@@ -1,0 +1,29 @@
+So I am at a roadblock because it's getting really complicated and I need to think through this.
+This is my planning file.
+
+Now the problem I'm having is that there are so many classes that each do basically the same
+thing but not. Here's what I currently have and my ideas for the future:
+
+PortCommunicator - C# and communicates with the ports. Also formats the commands
+ServoCommunicator - Wrapper for PortCommunicator (Maybe will have bounds checking inside)
+RobotArmSegment 
+  - Individual segment for the displaying of robot arms, also sends the commands to ServoCommunicator
+  - was gonna make segments selectable for better user experience
+CommandLine - Only commands for moving the robot arm via ServoCommunicator
+
+RobotArmSelector - Not implemented gonna remove
+
+All of these communicate with ServoCommunicator as a wrapper. Each segment in RobotArmSegment
+controls itself and then forwards the command to ServoCommunicator. The problem with this dispersement
+of servo classes is the messaging between everything. CommandLine - How do I update the correct robot
+arm in the GUI?
+
+Maybe I create match-table for each robot arm in ServoCommunicator, so when the CommandLine sends 
+a message it goes through the match table and updates the correct robot arm. But that's so much
+wasted code!
+
+My solution that I think I'm gonna do is I'm gonna refactor the entire RobotArmSegment class,
+it only handles showing the robot and giving the rotation information (Like max degrees)
+PortCommunicator will send a signal to each RobotArmSegment and the RobotArmSegment with the
+correct ServoIndex will execute the move command. Not sure how I'll get the position min/max
+but I know I want it to be elegant.

@@ -10,15 +10,20 @@ class_name RobotArmSegment
 
 @export var lengthCM : int = 20 # Centimeters, in Godot meters divide by 10
 @export var nextArmSegment : RobotArmSegment = null
-#@export var rotationAxis : Vector3i
+@export var rotationAxis : Vector3i
 
 var servoPosition : int = minPosition : set = Move
-var segment : CSGBox3D
+var segment : CSGPrimitive3D
 
 
 func _ready():
   segment = $Segment
-  segment.size.x = lengthCM / 10.0
+
+  if segment is CSGBox3D:
+    segment.size.x = lengthCM / 10.0
+  if segment is CSGCylinder3D:
+    segment.radius = lengthCM / 10.0
+
   # Make the base at start of last arm
   segment.position.x = -(lengthCM / (10.0 * 2))
 
@@ -35,8 +40,7 @@ func Move(newServoPosition : int):
 
   var rotationDegreesFromPositionAndDegrees = MapRange(servoPosition, minPosition, maxPosition, minDegrees, maxDegrees)
 
-  # TODO: For robot base, make this the bottom's rotation.
-  rotation.z = deg_to_rad(rotationDegreesFromPositionAndDegrees)
+  rotation = deg_to_rad(rotationDegreesFromPositionAndDegrees) * rotationAxis
 
 
 # A range from f1(first1) to f2 is now mapped to s1(second1) to s2,

@@ -24,6 +24,7 @@ func _input(event):
     lineEdit.text = history[currentHistoryIndex]
 
 
+  # TODO: When T pressed in-game, commandline goes away. Fix that pls by not doing that if it's focused
   # If commandline pressed, make it visible
   if Input.is_action_just_pressed("COMMAND_LINE"):
     lineEdit.visible = !lineEdit.visible

@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Scripts/ServoCommunicator.gd" id="2_7706h"]
 [ext_resource type="Script" path="res://Scripts/CameraRoot.gd" id="3_rfxrw"]
 [ext_resource type="PackedScene" uid="uid://dlbkbf1hoiqp5" path="res://robot_arm_segment.tscn" id="4_n0p2h"]
-[ext_resource type="Script" path="res://Scripts/RobotArmSelector.gd" id="4_o18il"]
+[ext_resource type="Script" path="res://Scripts/RobotArmSegment.gd" id="4_q4vf1"]
 [ext_resource type="Script" path="res://Scripts/CommandLine.gd" id="6_5m7gu"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_grr2f"]
@@ -25,29 +25,57 @@ ambient_light_color = Color(0.25098, 0.588235, 0.847059, 1)
 [node name="PortCommunicator" type="Node" parent="."]
 script = ExtResource("1_o2fqk")
 
-[node name="ServoCommunicator" type="Node" parent="."]
+[node name="ServoCommunicator" type="Node" parent="." node_paths=PackedStringArray("base", "shoulder", "elbow", "wrist", "claw")]
 script = ExtResource("2_7706h")
-
-[node name="RobotArmSelector" type="Node3D" parent="."]
-script = ExtResource("4_o18il")
+base = NodePath("../RobotArmRoot/Base")
+shoulder = NodePath("../RobotArmRoot/Base/Shoulder")
+elbow = NodePath("../RobotArmRoot/Base/Shoulder/Elbow")
+wrist = NodePath("../RobotArmRoot/Base/Shoulder/Elbow/Wrist")
+claw = NodePath("../RobotArmRoot/Base/Shoulder/Elbow/Wrist/Claw")
 
 [node name="RobotArmRoot" type="Node3D" parent="."]
 transform = Transform3D(-1, 7.64274e-15, 8.74228e-08, 0, -1, 8.74228e-08, 8.74228e-08, 8.74228e-08, 1, 0, 0, 0)
 
-[node name="Shoulder" parent="RobotArmRoot" node_paths=PackedStringArray("nextArmSegment") instance=ExtResource("4_n0p2h")]
+[node name="Base" type="Node3D" parent="RobotArmRoot" node_paths=PackedStringArray("nextArmSegment")]
+script = ExtResource("4_q4vf1")
+lengthCM = 8
+nextArmSegment = NodePath("Shoulder")
+rotationAxis = Vector3i(0, 1, 0)
+
+[node name="Segment" type="CSGCylinder3D" parent="RobotArmRoot/Base"]
+radius = 0.8
+height = 0.55
+sides = 32
+
+[node name="Shoulder" parent="RobotArmRoot/Base" node_paths=PackedStringArray("nextArmSegment") instance=ExtResource("4_n0p2h")]
 servo = 1
 nextArmSegment = NodePath("Elbow")
+rotationAxis = Vector3i(0, 0, 1)
 
-[node name="Elbow" parent="RobotArmRoot/Shoulder" node_paths=PackedStringArray("nextArmSegment") instance=ExtResource("4_n0p2h")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.10065, 0, 0)
+[node name="Elbow" parent="RobotArmRoot/Base/Shoulder" node_paths=PackedStringArray("nextArmSegment") instance=ExtResource("4_n0p2h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.05463, -3.51707e-16, -4.02302e-09)
 servo = 3
 lengthCM = 50
 nextArmSegment = NodePath("Wrist")
+rotationAxis = Vector3i(0, 0, 1)
 
-[node name="Wrist" parent="RobotArmRoot/Shoulder/Elbow" instance=ExtResource("4_n0p2h")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9967, 0, 0)
+[node name="Wrist" parent="RobotArmRoot/Base/Shoulder/Elbow" node_paths=PackedStringArray("nextArmSegment") instance=ExtResource("4_n0p2h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.05934, -7.16401e-15, -8.19468e-08)
 servo = 4
 lengthCM = 10
+nextArmSegment = NodePath("Claw")
+rotationAxis = Vector3i(0, 0, 1)
+
+[node name="Claw" type="Node3D" parent="RobotArmRoot/Base/Shoulder/Elbow/Wrist"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.09552, -3.09134e-15, -3.53608e-08)
+script = ExtResource("4_q4vf1")
+servo = 5
+lengthCM = 7
+rotationAxis = Vector3i(1, 0, 0)
+
+[node name="Segment" type="CSGBox3D" parent="RobotArmRoot/Base/Shoulder/Elbow/Wrist/Claw"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+size = Vector3(0.35, 0.12, 0.2)
 
 [node name="CameraRoot" type="Node3D" parent="."]
 script = ExtResource("3_rfxrw")

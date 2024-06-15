@@ -27,3 +27,4 @@ it only handles showing the robot and giving the rotation information (Like max 
 PortCommunicator will send a signal to each RobotArmSegment and the RobotArmSegment with the
 correct ServoIndex will execute the move command. Not sure how I'll get the position min/max
 but I know I want it to be elegant.
+Spoiler alert: It wasn't. But it works

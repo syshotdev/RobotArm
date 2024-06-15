@@ -1,5 +1,6 @@
 using System;
 using System.IO.Ports;
+using System.Text;
 using Godot;
 
 public partial class ServoCommunicator : Node
@@ -45,8 +46,11 @@ public partial class ServoCommunicator : Node
 
 	public void SendCommand(int servoIndex, int position, int ramp)
 	{
-		byte positionLowBit = Convert.ToByte(position % 255);
-		byte positionHighBit = Convert.ToByte(position >> 8);
+    // OH DANG:
+    // The PositionLowBit is like 7 bits instead of 8!
+    // Unless the spec said that but I'd guess all paramaters transmitted are 8 bit
+		byte positionLowBit = Convert.ToByte(position % 127);
+		byte positionHighBit = Convert.ToByte(position >> 7);
 		byte[] byteMessage = new byte[4];
 		// I really wish I could put this in brackets :( []
 		// First ServoIndex 1 byte, Ramp 1 byte, Position is 2 bytes
@@ -55,8 +59,13 @@ public partial class ServoCommunicator : Node
 		byteMessage[2] = positionLowBit;
 		byteMessage[3] = positionHighBit;
 
+    //GD.Print(positionLowBit);
+    //GD.Print(positionHighBit);
+
 		// Example message: !SC(0)(63)(1)(255)(13) to make servo 0 to pos 511
 		string message = "!SC" + byteMessage.GetStringFromUtf8() + Convert.ToChar(13);
+
+    GD.Print(BitConverter.ToString(Encoding.UTF8.GetBytes(message)));
 		port.WriteLine(message);
 	}
 
@@ -77,7 +86,7 @@ public partial class ServoCommunicator : Node
 	{
 		SerialPort tempPort = (SerialPort)sender;
 		string indata = tempPort.ReadExisting();
-		GD.Print("Data Recieved:");
-		GD.Print(indata);
+    //GD.Print("Data Recieved:");
+		//GD.Print(indata);
 	}
 }

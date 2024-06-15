@@ -44,7 +44,6 @@ func MoveServo(servo : Constants.ServoIndex, position : int, ramp : int):
 func GetSegmentFromEnum(servo : Constants.ServoIndex) -> RobotArmSegment:
   # For each arm in all arm segments, check if it's the correct ServoIndex and return the arm
   for arm in allSegments:
-    print(arm)
     if arm.servo == servo:
       return arm
   return null

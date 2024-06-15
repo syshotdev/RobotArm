@@ -2,7 +2,9 @@ extends Control
 
 @export var lineEdit : LineEdit
 @export var servoCommunicator : ServoCommunicator
+@onready var timer : Timer = $Timer # Timer that we use for callbacks and whatnot
 
+# For history of commandline
 var history := [""]
 var currentHistoryIndex := 0
 
@@ -39,7 +41,6 @@ func _input(event):
 
 # When you press enter, this gets called and it sanitizes the input
 func commandlineTextEntered(text : String):
-
   text = text.lstrip(" ").rstrip(" ")
 
   # Append command history
@@ -69,6 +70,13 @@ func runCommand(command : String, tokens : PackedStringArray):
 
       moveArm(tokens[0], tokens[1].to_int(), tokens[2].to_int())
 
+    "test":
+      if tokens.size() != 1:
+        sendLineEditError("Tokens is not 1. Format: servo")
+        return
+
+      testArm(tokens[0])
+
     _:
       printerr("No command named '%s'" % command)
 
@@ -76,6 +84,44 @@ func runCommand(command : String, tokens : PackedStringArray):
 func sendLineEditError(text : String):
   printerr(text)
   pass # TODO: Implement this by showing on-screen error
+
+
+# These are here because the lerping between servo positions requires storing variables
+# for longer than one function call.
+var testServoPosition : int = 0
+var testTime : float = 0 # How many seconds the test has been running
+var testServo : String = "NOTASERVO"
+const testTimeMax : float = 120.0 # Seconds the robot will go from min to max position
+const updateRateSeconds : float = 0.3 # How often to update robot arm position while testing
+
+# This function goes from position 0 (for motors) to position ~10000 to get an estimate
+# for degrees and min/max position. This will get complicated :)
+func testArm(servo : String):
+  testServoPosition = 0
+  testTime = 0
+  testServo = servo
+
+  # Connect timeout signal
+  if not timer.timeout.is_connected(moveArm):
+    timer.timeout.connect(updateTestArm)
+
+  timer.wait_time = updateRateSeconds
+  timer.start()
+
+# When you start this function, it goes in updateRate intervals till the target time has been reached
+func updateTestArm():
+  # If we've gone over max time for test, end it.
+  if testTime > testTimeMax:
+    timer.stop()
+    return
+
+  testTime += updateRateSeconds
+  testServoPosition = lerp(0, 3000, testTime / testTimeMax) # From 0 to () servo position
+
+  moveArm(testServo, testServoPosition, 1) # Move the servo to servo position at 1 ramp (very fast)
+  #print("Moving arm to position ", testServoPosition)
+
+  timer.start()
 
 
 # TODO: Make "servoPosition" degrees rather than an arbitrary number

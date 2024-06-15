@@ -7,8 +7,9 @@ class_name RobotArmSegment
 @export var maxPosition : int = 1000
 @export var minDegrees : float = 0
 @export var maxDegrees : float = 180
+@export var defaultPosition : int
 
-@export var lengthCM : int = 20 # Centimeters, in Godot meters divide by 10
+@export var lengthCM : float = 10 # Centimeters, in Godot meters divide by 10
 @export var nextArmSegment : RobotArmSegment = null
 @export var rotationAxis : Vector3i
 

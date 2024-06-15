@@ -1,4 +1,4 @@
-Neovim-type entering of letters or commands (like :move 0 99)
+Make script to go through all possible positions for a given servo and find out the min and max degrees
 Name everything better (I have two ServoCommunicator's but they do different things)
 README.md
 Publish to GitHub
@@ -14,4 +14,4 @@ Allow for controlling it via internet (so someone from across the world can cont
 
 
 Done:
-
+Neovim-type entering of letters or commands (like :move 0 99)
